@@ -1,0 +1,38 @@
+PODS:
+  - EmptyDataSet-Swift (4.2.0)
+  - GoogleAnalytics (3.17.0)
+  - Kingfisher (4.10.0)
+  - SQLite.swift (0.11.5):
+    - SQLite.swift/standard (= 0.11.5)
+  - SQLite.swift/standard (0.11.5)
+  - TMDBSwift (0.5.1)
+  - YoutubeKit (0.3.0)
+
+DEPENDENCIES:
+  - EmptyDataSet-Swift (~> 4.2.0)
+  - GoogleAnalytics
+  - Kingfisher (~> 4.0)
+  - SQLite.swift (~> 0.11.5)
+  - TMDBSwift
+  - YoutubeKit
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - EmptyDataSet-Swift
+    - GoogleAnalytics
+    - Kingfisher
+    - SQLite.swift
+    - TMDBSwift
+    - YoutubeKit
+
+SPEC CHECKSUMS:
+  EmptyDataSet-Swift: 1fa0b35f530a35f852ecb2b53564728b0c300aaf
+  GoogleAnalytics: f42cc53a87a51fe94334821868d9c8481ff47a7b
+  Kingfisher: 43c4b802d8b5256cf1f4379e9cd10b329be6d3e2
+  SQLite.swift: 6e5356850bb1791459f8c16d6ee9195b28714a2e
+  TMDBSwift: 9220f3dcee23372c05b92f8c111f5f4c37185aee
+  YoutubeKit: a00e9eebcb3cfe26d7e233c5f8591dfd0b08f7a0
+
+PODFILE CHECKSUM: 6e2d385a7cbd09018c211384558f184ae75dfb4b
+
+COCOAPODS: 1.5.3
