@@ -27,6 +27,8 @@ class SearchTableViewController: UITableViewController, UISearchResultsUpdating,
       controller.searchBar.placeholder = "Rechercher un film"
       controller.searchBar.sizeToFit()
       controller.searchBar.autocapitalizationType = .none
+      controller.searchBar.searchBarStyle = .minimal
+      controller.searchBar.backgroundColor = UIColor.white
       controller.searchBar.delegate = self
       
       tableView.tableHeaderView = controller.searchBar
@@ -96,14 +98,17 @@ class SearchTableViewController: UITableViewController, UISearchResultsUpdating,
     let cell = tableView.dequeueReusableCell(withIdentifier: Configuration.IDENTIFIERS["MOVIE_CELL"]!, for: indexPath)
   
     let movie: Movie = self.movies[indexPath.row]
+    let url = URL(string: movie.getPosterUrl())
+    
     cell.textLabel?.text = movie.getTitle()
     cell.detailTextLabel?.text = movie.getReleaseDateString()
     
-    // let url = URL(string: movie.getPosterUrl())
-    // let processor = CroppingImageProcessor(size: CGSize(width: 185, height: 185)) >> ResizingImageProcessor(referenceSize: CGSize(width: 150, height: 150))
-    // cell.imageView?.kf.setImage(with: url, options: [.processor(processor)]) { image, error, cacheType, imageURL in
-    // tableView.reloadRows(at: [indexPath], with: UITableView.RowAnimation.none)
-    // }
+    let processor = ResizingImageProcessor(referenceSize: CGSize(width: 100, height: 150))
+    
+    cell.imageView?.kf.indicatorType = .activity
+    cell.imageView?.kf.setImage(with: url, options: [.processor(processor)]) { image, error, cacheType, imageURL in
+      cell.setNeedsLayout()
+    }
     
     return cell
   }

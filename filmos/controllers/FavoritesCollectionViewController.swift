@@ -17,6 +17,9 @@ class FavoritesCollectionViewController: UICollectionViewController, EmptyDataSe
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    // Necessary when the stacked view shows a "back" item
+    navigationItem.title = "Favoris"
+    
     collectionView.emptyDataSetSource = self
     collectionView.emptyDataSetDelegate = self
     

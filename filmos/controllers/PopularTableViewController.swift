@@ -9,17 +9,23 @@
 import UIKit
 import TMDBSwift
 import Kingfisher
+import EmptyDataSet_Swift
 
-class PopularTableViewController: UITableViewController {
+class PopularTableViewController: UITableViewController, EmptyDataSetSource,  EmptyDataSetDelegate {
   
   var currentPage = 1
   var movies: [Movie] = []
   var filteredMovies = [Movie]()
+  var hasConnectionError = false
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    navigationItem.title = "Films Récents"
+    navigationItem.title = "Populaires"
+    
+    tableView.tableFooterView = UIView()
+    tableView.emptyDataSetSource = self
+    tableView.emptyDataSetDelegate = self
     
     fetchMoreMovies()
     
@@ -40,14 +46,19 @@ class PopularTableViewController: UITableViewController {
   }
   
   func fetchMoreMovies() {
-    API.popular(page: currentPage, completion: onNewMovies(_:newMovies:))
-    
-    currentPage += 1
+    API.popular(page: currentPage, completion: onNewMovies(client:newMovies:))
   }
   
-  func onNewMovies(_: ClientReturn, newMovies: [MovieMDB]?) {
+  func onNewMovies(client: ClientReturn, newMovies: [MovieMDB]?) {
+    if (client.error != nil) {
+      hasConnectionError = true
+      tableView.reloadData()
+      return
+    } else {
+      hasConnectionError = false
+    }
+    
     guard let movies = newMovies else {
-      print("Could not connect to API")
       return
     }
     
@@ -64,6 +75,8 @@ class PopularTableViewController: UITableViewController {
       }
     }
     
+    currentPage += 1
+    
     tableView.reloadData()
   }
   
@@ -75,17 +88,17 @@ class PopularTableViewController: UITableViewController {
     let cell = tableView.dequeueReusableCell(withIdentifier: Configuration.IDENTIFIERS["MOVIE_CELL"]!, for: indexPath)
     
     let movie: Movie = movies[indexPath.row]
-    // let url = URL(string: movie.getPosterUrl())
+    let url = URL(string: movie.getPosterUrl())
     
     cell.textLabel?.text = movie.getTitle()
     cell.detailTextLabel?.text = movie.getReleaseDateString()
     
-    // let processor = CroppingImageProcessor(size: CGSize(width: 185, height: 185)) >> ResizingImageProcessor(referenceSize: CGSize(width: 150, height: 150))
-     
-    // cell.imageView?.kf.setImage(with: url) { image, error, cacheType, imageURL in
-    //   cell.imageView?.image = image
-    //   tableView.reloadRows(at: [indexPath], with: UITableView.RowAnimation.none)
-    // }
+    let processor = ResizingImageProcessor(referenceSize: CGSize(width: 100, height: 150))
+
+    cell.imageView?.kf.indicatorType = .activity
+    cell.imageView?.kf.setImage(with: url, options: [.processor(processor)]) { image, error, cacheType, imageURL in
+      cell.setNeedsLayout()
+    }
     
     return cell
   }
@@ -112,6 +125,32 @@ class PopularTableViewController: UITableViewController {
         controller.movie = movies[currentIndex]
       }
     }
+  }
+  
+  // Data for empty list state: when to display, title, description and image
+  
+  func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
+    return hasConnectionError
+  }
+  
+  func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+    return NSAttributedString(string: "Problème de connexion")
+  }
+  
+  func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+    return NSAttributedString(string: "Un problème est survenu lors de la récupération des films. Veuillez vérifier votre connexion Internet.")
+  }
+  
+  func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+    return nil
+  }
+  
+  func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+    return NSAttributedString(string: "Réessayer")
+  }
+  
+  func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
+    fetchMoreMovies()
   }
   
 }
